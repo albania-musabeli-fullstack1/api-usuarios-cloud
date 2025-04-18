@@ -1,6 +1,7 @@
 package com.musabeli.api_usuarios_cloud.services;
 
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
+import com.musabeli.api_usuarios_cloud.dto.UpdateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
 import com.musabeli.api_usuarios_cloud.exceptions.ResourceNotFoundException;
 import com.musabeli.api_usuarios_cloud.mapper.UsuarioMapper;
@@ -49,5 +50,26 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario getUsuarioById(Long id) {
         return findUsuarioById(id);
+    }
+
+    @Override
+    public Usuario updateUsuario(Long id, UpdateUsuarioDto updateUsuarioDto) {
+
+        Usuario updateUsuario = this.findUsuarioById(id);
+        if (updateUsuarioDto.getUsuario() != null){
+            updateUsuario.setUsuario(updateUsuarioDto.getUsuario());
+        }
+        if (updateUsuarioDto.getCorreo() != null){
+            updateUsuario.setCorreo(updateUsuarioDto.getCorreo());
+        }
+        if (updateUsuarioDto.getPassword() != null){
+            updateUsuario.setPassword(updateUsuarioDto.getPassword());
+        }
+        if (updateUsuarioDto.getRol() != null){
+            updateUsuario.setRol(updateUsuarioDto.getRol());
+        }
+
+        // actualizar en bbdd
+        return this.usuarioRepository.save(updateUsuario);
     }
 }

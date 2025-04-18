@@ -1,6 +1,7 @@
 package com.musabeli.api_usuarios_cloud.controllers;
 
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
+import com.musabeli.api_usuarios_cloud.dto.UpdateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
 import com.musabeli.api_usuarios_cloud.services.UsuarioService;
 import jakarta.validation.Valid;
@@ -33,6 +34,12 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id){
         Usuario usuario = this.usuarioService.getUsuarioById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @Valid @RequestBody UpdateUsuarioDto usuarioDto){
+        Usuario usuario = this.usuarioService.updateUsuario(id, usuarioDto);
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 }
