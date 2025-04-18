@@ -3,9 +3,11 @@ package com.musabeli.api_usuarios_cloud.services;
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
 
+import java.util.List;
 
 
 public interface UsuarioService {
 
     Usuario createUsuario(CreateUsuarioDto usuarioDto);
+    List<Usuario> getAllUsuarios();
 }

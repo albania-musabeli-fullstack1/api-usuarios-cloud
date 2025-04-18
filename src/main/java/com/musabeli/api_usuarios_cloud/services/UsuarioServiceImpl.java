@@ -7,6 +7,8 @@ import com.musabeli.api_usuarios_cloud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -23,5 +25,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = UsuarioMapper.fromCreateUsuario(usuarioDto);
         // guardar en bbdd
         return this.usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public List<Usuario> getAllUsuarios() {
+        return this.usuarioRepository.findAll();
     }
 }
