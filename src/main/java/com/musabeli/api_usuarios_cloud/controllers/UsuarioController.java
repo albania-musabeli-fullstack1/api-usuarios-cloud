@@ -29,4 +29,10 @@ public class UsuarioController {
         List<Usuario> usuarioList = this.usuarioService.getAllUsuarios();
         return ResponseEntity.status(HttpStatus.OK).body(usuarioList);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id){
+        Usuario usuario = this.usuarioService.getUsuarioById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
 }

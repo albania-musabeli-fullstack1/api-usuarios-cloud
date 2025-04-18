@@ -10,4 +10,5 @@ public interface UsuarioService {
 
     Usuario createUsuario(CreateUsuarioDto usuarioDto);
     List<Usuario> getAllUsuarios();
+    Usuario getUsuarioById(Long id);
 }

@@ -2,12 +2,14 @@ package com.musabeli.api_usuarios_cloud.services;
 
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
+import com.musabeli.api_usuarios_cloud.exceptions.ResourceNotFoundException;
 import com.musabeli.api_usuarios_cloud.mapper.UsuarioMapper;
 import com.musabeli.api_usuarios_cloud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -15,6 +17,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    private Usuario findUsuarioById(Long id){
+        Optional<Usuario> usuario = this.usuarioRepository.findById(id);
+
+        if (usuario.isPresent()){
+            return usuario.get();
+        }
+        else {
+            throw new ResourceNotFoundException("No existen registros del usuario con id " + id);
+        }
+    }
+
 
     @Override
     public Usuario createUsuario(CreateUsuarioDto usuarioDto) {
@@ -30,5 +44,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public List<Usuario> getAllUsuarios() {
         return this.usuarioRepository.findAll();
+    }
+
+    @Override
+    public Usuario getUsuarioById(Long id) {
+        return findUsuarioById(id);
     }
 }
