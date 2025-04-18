@@ -1,0 +1,27 @@
+package com.musabeli.api_usuarios_cloud.services;
+
+import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
+import com.musabeli.api_usuarios_cloud.entities.Usuario;
+import com.musabeli.api_usuarios_cloud.mapper.UsuarioMapper;
+import com.musabeli.api_usuarios_cloud.repositories.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class UsuarioServiceImpl implements UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Override
+    public Usuario createUsuario(CreateUsuarioDto usuarioDto) {
+        // Validar si existe un usuario con el correo
+        boolean correoExiste = this.usuarioRepository.findByCorreo(usuarioDto.getCorreo()).isPresent();
+
+        if (correoExiste) return null;
+        Usuario usuario = UsuarioMapper.fromCreateUsuario(usuarioDto);
+        // guardar en bbdd
+        return this.usuarioRepository.save(usuario);
+    }
+}
