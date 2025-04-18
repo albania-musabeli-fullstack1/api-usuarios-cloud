@@ -13,4 +13,5 @@ public interface UsuarioService {
     List<Usuario> getAllUsuarios();
     Usuario getUsuarioById(Long id);
     Usuario updateUsuario(Long id, UpdateUsuarioDto updateUsuarioDto);
+    Usuario deleteUsuario(Long id);
 }

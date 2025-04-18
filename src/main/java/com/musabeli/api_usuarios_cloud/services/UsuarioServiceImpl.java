@@ -72,4 +72,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         // actualizar en bbdd
         return this.usuarioRepository.save(updateUsuario);
     }
+
+    @Override
+    public Usuario deleteUsuario(Long id) {
+        Usuario usuario = this.findUsuarioById(id);
+
+        this.usuarioRepository.deleteById(id);
+        return usuario;
+    }
 }

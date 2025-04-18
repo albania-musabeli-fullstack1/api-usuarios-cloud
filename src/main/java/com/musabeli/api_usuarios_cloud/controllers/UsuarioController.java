@@ -42,4 +42,10 @@ public class UsuarioController {
         Usuario usuario = this.usuarioService.updateUsuario(id, usuarioDto);
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Usuario> deleteUsuario(@PathVariable Long id){
+        Usuario usuario = this.usuarioService.deleteUsuario(id);
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
 }
