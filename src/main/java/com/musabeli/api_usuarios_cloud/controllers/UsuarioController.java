@@ -10,12 +10,21 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @RestController
 @RequestMapping("/usuario")
+@Slf4j
 public class UsuarioController {
 
     @Autowired
@@ -24,30 +33,35 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody CreateUsuarioDto usuarioDto){
         Usuario nuevoUsuario = this.usuarioService.createUsuario(usuarioDto);
+        log.info("METODO POST: crear usuario OK");
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
     @GetMapping("/getUsuarios")
     public ResponseEntity<List<Usuario>> getUsuarios(){
         List<Usuario> usuarioList = this.usuarioService.getAllUsuarios();
+        log.info("METODO GET: obtener usuarios OK");
         return ResponseEntity.status(HttpStatus.OK).body(usuarioList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id){
         Usuario usuario = this.usuarioService.getUsuarioById(id);
+        log.info("Usuario encontrado: id: {}", usuario.getId());
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @Valid @RequestBody UpdateUsuarioDto usuarioDto){
         Usuario usuario = this.usuarioService.updateUsuario(id, usuarioDto);
+        log.info("Usuario con id: {} actualizado", usuario.getId());
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Usuario> deleteUsuario(@PathVariable Long id){
         Usuario usuario = this.usuarioService.deleteUsuario(id);
+        log.info("Usuario con id: {} eliminado", usuario.getId());
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
@@ -55,6 +69,7 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginDto){
         LoginResponseDto userLogin = this.usuarioService.login(loginDto);
+        log.info("Inicio de sesión OK");
         return ResponseEntity.status(HttpStatus.OK).body(userLogin);
     }
 }

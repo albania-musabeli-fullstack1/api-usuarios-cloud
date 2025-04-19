@@ -7,6 +7,7 @@ import com.musabeli.api_usuarios_cloud.dto.UpdateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
 import com.musabeli.api_usuarios_cloud.exceptions.InvalidCredentialsException;
 import com.musabeli.api_usuarios_cloud.exceptions.ResourceNotFoundException;
+import com.musabeli.api_usuarios_cloud.exceptions.UserEmailExistsException;
 import com.musabeli.api_usuarios_cloud.mapper.UsuarioMapper;
 import com.musabeli.api_usuarios_cloud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Validar si existe un usuario con el correo
         boolean correoExiste = this.usuarioRepository.findByCorreo(usuarioDto.getCorreo()).isPresent();
 
-        if (correoExiste) return null;
+        if (correoExiste) throw new UserEmailExistsException("El correo ingresado ya se encuentra registrado");
         Usuario usuario = UsuarioMapper.fromCreateUsuario(usuarioDto);
         // guardar en bbdd
         return this.usuarioRepository.save(usuario);
@@ -52,7 +53,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario getUsuarioById(Long id) {
-        return findUsuarioById(id);
+        return this.findUsuarioById(id);
     }
 
     @Override

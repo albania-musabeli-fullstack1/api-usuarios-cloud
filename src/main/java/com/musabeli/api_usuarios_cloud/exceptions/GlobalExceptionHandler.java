@@ -12,8 +12,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     private ErrorResponse buildErrorResponse(HttpStatus status, String message, String path){
@@ -25,6 +28,10 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /*
+    * Manejador de excepciones para errores de validación de campos
+    * Se activa cuando la petición tiene parámetros inválidos
+    */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, List<ValidationErrorResponse>>> handlerValidationErrors(MethodArgumentNotValidException ex){
 
@@ -38,15 +45,21 @@ public class GlobalExceptionHandler {
             );
             errors.add(validationError);
         }
+        log.error("Error en validación de campos: {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("errors",errors));
     }
 
 
+    /**
+     * Handler de excepciones para recursos no encontrados (no existe en la base de datos)
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlerNotFoundException(
             ResourceNotFoundException ex,
             HttpServletRequest request
     ){
+        log.warn("Registro no encontrado: {}", ex.getMessage());
+
         ErrorResponse errorResponse = this.buildErrorResponse(
                 HttpStatus.NOT_FOUND,
                 ex.getMessage(),
@@ -56,12 +69,16 @@ public class GlobalExceptionHandler {
     }
 
 
+    /**
+     * Maneja excepciones para errores de tipo de datos
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handlerArgumentTypeError(
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request
     ){
         String message = "El tipo de dato para el parámetro " + ex.getName() + " es incorrecto." + " Valor recibido: " + ex.getValue();
+        log.error("Error tipo de dato en parámetro '{}': valor '{}'", ex.getName(), ex.getValue());
 
         ErrorResponse errorResponse = this.buildErrorResponse(
                 HttpStatus.NOT_FOUND,
@@ -71,17 +88,41 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-
+    /**
+     * Manejador de excepciones para errores al inicio de sesión
+     */
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handlerLoginException(
             InvalidCredentialsException ex,
             HttpServletRequest request
     ){
+        log.warn("Error al iniciar sesión: {}", ex.getMessage());
+
         ErrorResponse errorResponse = this.buildErrorResponse(
                 HttpStatus.UNAUTHORIZED,
                 ex.getMessage(),
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+
+    /**
+     * Manejador de excepciones para registro de usuarios con correo ya existente
+     */
+    @ExceptionHandler(UserEmailExistsException.class)
+    public ResponseEntity<ErrorResponse> handlerUserEmailExistsException(
+            UserEmailExistsException ex,
+            HttpServletRequest request
+    ){
+        log.warn("Error en registro: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = this.buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }

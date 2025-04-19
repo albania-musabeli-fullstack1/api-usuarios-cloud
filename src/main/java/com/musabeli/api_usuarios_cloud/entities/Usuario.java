@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Builder // Crear una instancia de la clase sin el campo id
+@Builder
 @Table(name = "usuario")
 public class Usuario {
 
