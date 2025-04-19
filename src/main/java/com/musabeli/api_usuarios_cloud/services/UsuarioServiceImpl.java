@@ -1,8 +1,11 @@
 package com.musabeli.api_usuarios_cloud.services;
 
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
+import com.musabeli.api_usuarios_cloud.dto.LoginRequestDto;
+import com.musabeli.api_usuarios_cloud.dto.LoginResponseDto;
 import com.musabeli.api_usuarios_cloud.dto.UpdateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
+import com.musabeli.api_usuarios_cloud.exceptions.InvalidCredentialsException;
 import com.musabeli.api_usuarios_cloud.exceptions.ResourceNotFoundException;
 import com.musabeli.api_usuarios_cloud.mapper.UsuarioMapper;
 import com.musabeli.api_usuarios_cloud.repositories.UsuarioRepository;
@@ -79,5 +82,20 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         this.usuarioRepository.deleteById(id);
         return usuario;
+    }
+
+    @Override
+    public LoginResponseDto login(LoginRequestDto loginDto) {
+        Optional<Usuario> usuario = this.usuarioRepository.findByCorreoAndPassword(
+                loginDto.getCorreo(),
+                loginDto.getPassword()
+        );
+
+        if (usuario.isPresent()){
+            return new LoginResponseDto(usuario.get().getUsuario(), "INICIO DE SESIÓN EXITOSO");
+        }
+        else {
+            throw new InvalidCredentialsException("Error al iniciar sesión. Correo y/o contraseña inválidos");
+        }
     }
 }

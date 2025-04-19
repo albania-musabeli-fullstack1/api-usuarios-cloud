@@ -1,6 +1,8 @@
 package com.musabeli.api_usuarios_cloud.services;
 
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
+import com.musabeli.api_usuarios_cloud.dto.LoginRequestDto;
+import com.musabeli.api_usuarios_cloud.dto.LoginResponseDto;
 import com.musabeli.api_usuarios_cloud.dto.UpdateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
 
@@ -14,4 +16,5 @@ public interface UsuarioService {
     Usuario getUsuarioById(Long id);
     Usuario updateUsuario(Long id, UpdateUsuarioDto updateUsuarioDto);
     Usuario deleteUsuario(Long id);
+    LoginResponseDto login(LoginRequestDto loginDto);
 }

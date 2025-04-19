@@ -1,6 +1,8 @@
 package com.musabeli.api_usuarios_cloud.controllers;
 
 import com.musabeli.api_usuarios_cloud.dto.CreateUsuarioDto;
+import com.musabeli.api_usuarios_cloud.dto.LoginRequestDto;
+import com.musabeli.api_usuarios_cloud.dto.LoginResponseDto;
 import com.musabeli.api_usuarios_cloud.dto.UpdateUsuarioDto;
 import com.musabeli.api_usuarios_cloud.entities.Usuario;
 import com.musabeli.api_usuarios_cloud.services.UsuarioService;
@@ -47,5 +49,12 @@ public class UsuarioController {
     public ResponseEntity<Usuario> deleteUsuario(@PathVariable Long id){
         Usuario usuario = this.usuarioService.deleteUsuario(id);
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
+
+    // Inicio de sesion
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginDto){
+        LoginResponseDto userLogin = this.usuarioService.login(loginDto);
+        return ResponseEntity.status(HttpStatus.OK).body(userLogin);
     }
 }
