@@ -2,18 +2,17 @@ package com.musabeli.api_usuarios_cloud.entities;
 
 import com.musabeli.api_usuarios_cloud.enums.Rol;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario extends RepresentationModel<Usuario> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

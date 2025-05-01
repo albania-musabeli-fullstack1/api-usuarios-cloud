@@ -8,6 +8,8 @@ import com.musabeli.api_usuarios_cloud.entities.Usuario;
 import com.musabeli.api_usuarios_cloud.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +36,34 @@ public class UsuarioController {
     public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody CreateUsuarioDto usuarioDto){
         Usuario nuevoUsuario = this.usuarioService.createUsuario(usuarioDto);
         log.info("METODO POST: crear usuario OK");
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+
+        // Uso de HATEOAS
+        nuevoUsuario.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarioById(nuevoUsuario.getId())).withSelfRel()
+        );
+        nuevoUsuario.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarios()).withRel(IanaLinkRelations.COLLECTION)
+        );
+
+        return ResponseEntity.created(
+                WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarioById(nuevoUsuario.getId())
+                ).toUri()
+        ).body(nuevoUsuario);
     }
 
     @GetMapping("/getUsuarios")
     public ResponseEntity<List<Usuario>> getUsuarios(){
         List<Usuario> usuarioList = this.usuarioService.getAllUsuarios();
+
+        for (Usuario usuario:usuarioList){
+            usuario.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarioById(usuario.getId())).withSelfRel()
+            );
+            usuario.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarios()).withRel(IanaLinkRelations.COLLECTION)
+            );
+        }
         log.info("METODO GET: obtener usuarios OK");
         return ResponseEntity.status(HttpStatus.OK).body(usuarioList);
     }
@@ -47,6 +71,12 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id){
         Usuario usuario = this.usuarioService.getUsuarioById(id);
+        usuario.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarioById(usuario.getId())).withSelfRel()
+        );
+        usuario.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarios()).withRel(IanaLinkRelations.COLLECTION)
+        );
         log.info("Usuario encontrado: id: {}", usuario.getId());
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
@@ -54,6 +84,12 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @Valid @RequestBody UpdateUsuarioDto usuarioDto){
         Usuario usuario = this.usuarioService.updateUsuario(id, usuarioDto);
+        usuario.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarioById(usuario.getId())).withSelfRel()
+        );
+        usuario.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(UsuarioController.class).getUsuarios()).withRel(IanaLinkRelations.COLLECTION)
+        );
         log.info("Usuario con id: {} actualizado", usuario.getId());
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
